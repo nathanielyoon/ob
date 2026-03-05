@@ -9,7 +9,7 @@
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          ob = pkgs.stdenv.mkDerivation (final: {
+          obsidian-headless = pkgs.stdenv.mkDerivation (final: {
             pname = "obsidian-headless";
             version = "0.0.5";
             src = pkgs.fetchFromGitHub {
@@ -20,10 +20,10 @@
             };
             nativeBuildInputs = [
               pkgs.nodejs
-              pkgs.pnpm.configHook
+              pkgs.pnpmConfigHook
               pkgs.pnpm
             ];
-            pnpmDeps = pkgs.pnpm.fetchDeps {
+            pnpmDeps = pkgs.fetchPnpmDeps {
               inherit (final) pname version src;
               fetcherVersion = 3;
               hash = "sha256-9XbLTX0ZM7GzRkNQ0IIKjuU7dIzzz3WvqfbBOFdIdmY=";
@@ -38,12 +38,14 @@
               chmod +x "$out/bin/ob"
             '';
           });
-          default = self.packages.${system}.ob;
+          default = self.packages.${system}.obsidian-headless;
         }
       );
       overlays = {
-        ob = _: prev: { ob = self.packages.${prev.stdenv.hostPlatform.system}.ob; };
-        default = self.overlays.ob;
+        obsidian-headless = _: prev: {
+          obsidian-headless = self.packages.${prev.stdenv.hostPlatform.system}.obsidian-headless;
+        };
+        default = self.overlays.obsidian-headless;
       };
     };
 }
