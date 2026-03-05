@@ -38,7 +38,12 @@
               chmod +x "$out/bin/ob"
             '';
           });
+          default = self.packages.${system}.ob;
         }
       );
+      overlays = {
+        ob = _: prev: { ob = self.packages.${prev.stdenv.hostPlatform.system}.ob; };
+        default = self.overlays.ob;
+      };
     };
 }
